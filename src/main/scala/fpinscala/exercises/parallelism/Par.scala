@@ -62,6 +62,9 @@ object Par:
   def sequenceSimple[A](pas: List[Par[A]]): Par[List[A]] =
     pas.foldRight(unit(List.empty[A]))((pa, acc) => pa.map2(acc)(_ :: _))
 
+  def traverse[A, B](pas: List[A])(f: A => Par[B]): Par[List[B]] = 
+    pas.foldRight(unit(List.empty[B]))((a, acc) => f(a).map2(acc)(_ :: _))
+
   // This implementation forks the recursive step off to a new logical thread,
   // making it effectively tail-recursive. However, we are constructing
   // a right-nested parallel program, and we can get better performance by
